@@ -1,8 +1,8 @@
 '''
     @Author: Deven Gupta
-    @Date: 06-09-2024
+    @Date: 07-09-2024
     @Last Modified by: Deven Gupta
-    @Last Modified time: 06-09-2024 
+    @Last Modified time: 07-09-2024 
     @Title : Python program to create an Address Book System
 '''
 from validator import *
@@ -251,40 +251,116 @@ class AddressBook:
         else:
             self.logger.info("No contacts available.\n")
 
+class AddressBookManager:
+    logger = create_logger('AddressBook_logger')
+    def __init__(self):
+        self.address_books = {}
+
+    def create_address_book(self, name):
+        if name in self.address_books:
+            self.logger.info("Address book with this name already exists.")
+        else:
+            self.address_books[name] = AddressBook()
+            self.logger.info(f"Address book '{name}' created successfully.")
+
+    def select_address_book(self):
+        if self.address_books :
+            print("Available address books:")
+            for index, name in enumerate(self.address_books.keys(), 1):
+                print(f"{index}. {name}")
+            try :
+                choice = int(input("Select an address book by number: "))
+                names = list(self.address_books.keys())
+                if 1 <= choice <= len(names):
+                    return self.address_books[names[choice - 1]]
+                else:
+                    print("Invalid choice.")
+                    return None
+            except ValueError:
+                self.logger.info("Invalid input. Please enter Interger only")
+        else:
+            self.logger.info("No Address Book available. Create Address Book\n")
+        
+    def delete_address_book(self):
+        """
+        Deletes an address book with the specified name.
+        If the address book does not exist, informs the user.
+        """
+        if self.address_books :
+            print("Available address books:")
+            for index, name in enumerate(self.address_books.keys(), 1):
+                print(f"{index}. {name}")
+            try :
+                choice = int(input("Select an address book by number to delete: "))
+                names = list(self.address_books.keys())
+                if 1 <= choice <= len(names) :
+                    name = names[choice - 1]
+                    del self.address_books[name]
+                    self.logger.info(f"Address book '{name}' deleted successfully.")
+                else:
+                    print("Invalid choice.")
+                    return None
+            except ValueError:
+                self.logger.info("Invalid input. Please enter Interger only")
+        else:
+            self.logger.info("No Address Book available. Create Address Book\n")
+
 def main():
-    address_book = AddressBook()
+    manager = AddressBookManager()
     print("*** Welcome to Address Book Program ***")
+
     while True:
         print("Options")
-        print("1. Add Contact")
-        print("2. Edit Contact")
-        print("3. Delete Contact")
-        print("4. View Contact")
-        print("5. View All Contacts")
-        print("6. Exit")
+        print("1. Create Address Book")
+        print("2. Select Address Book")
+        print("3. Delete Address Book")
+        print("4. Exit")
         
-        choice = input("Enter your choice (1-6): ")
+        choice = input("Enter your choice (1-4): ")
         
         if choice == '1':
-            address_book.add_contact()
+            name = input("Enter the name for the new address book: ")
+            manager.create_address_book(name)
         elif choice == '2':
-            address_book.edit_contact()
+            address_book = manager.select_address_book()
+            if address_book:
+                while True:
+                    print("Options")
+                    print("1. Add Contact")
+                    print("2. Edit Contact")
+                    print("3. Delete Contact")
+                    print("4. View Contact")
+                    print("5. View All Contacts")
+                    print("6. Back to Main Menu")
+                    
+                    sub_choice = input("Enter your choice (1-6): ")
+                    
+                    if sub_choice == '1':
+                        address_book.add_contact()
+                    elif sub_choice == '2':
+                        address_book.edit_contact()
+                    elif sub_choice == '3':
+                        address_book.delete_contact()
+                    elif sub_choice == '4':
+                        try:
+                            first_name = input("Enter first name: ")
+                            last_name = input("Enter last name: ")
+                            address_book.view_contact(first_name, last_name)
+                        except ValueError:
+                            address_book.logger.info("Invalid input. Please enter valid names.")
+                    elif sub_choice == '5':
+                        address_book.view_all_contacts()
+                    elif sub_choice == '6':
+                        break
+                    else:
+                        address_book.logger.info("Invalid choice. Please enter a number between 1 and 6.\n")
         elif choice == '3':
-            address_book.delete_contact()
+            manager.delete_address_book()
         elif choice == '4':
-            try:
-                first_name = input("Enter first name: ")
-                last_name = input("Enter last name: ")
-                address_book.view_contact(first_name, last_name)
-            except ValueError:
-                address_book.logger.info("Invalid input. Please enter valid names.")
-        elif choice == '5':
-            address_book.view_all_contacts()
-        elif choice == '6':
-            address_book.logger.info("Exiting the system. Goodbye!")
+            print("Exiting the system. Goodbye!")
             break
         else:
-            address_book.logger.info("Invalid choice. Please enter a number between 1 and 6.\n")
+            print("Invalid choice. Please enter a number between 1 and 3.\n")
 
 if __name__ == "__main__":
     main()
