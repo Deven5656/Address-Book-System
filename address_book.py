@@ -28,7 +28,7 @@ class AddressBook:
     def add_contact(self):
         """
         Description:
-            Prompts the user for contact details and adds the contact to the address book.
+            Prompts the user for contact details and adds the contact to the address book (One at a time).
         Parameters:
             None
         Returns:
