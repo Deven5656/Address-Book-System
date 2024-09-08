@@ -255,7 +255,7 @@ class AddressBook:
     def view_contacts_by_city(self, city):
         """
         Description:
-            Prints the details of all contacts in the specified city.
+            Prints all names in the specified city.
         Parameters:
             city (str): The city to filter contacts by.
         Returns:
@@ -269,6 +269,24 @@ class AddressBook:
                 found = True
         if not found:
             self.logger.info(f"No contacts found in city: {city}")
+
+    def view_contacts_by_state(self, state):
+        """
+        Description:
+            Prints all names in the specified state.
+        Parameters:
+            state (str): The state to filter contacts by.
+        Returns:
+            None
+        """
+        state = state.strip().lower()
+        found = False
+        for contact in self.contacts.values():
+            if self._normalize_name(contact['State']) == state:
+                self.logger.info(f"{contact['First Name']} {contact['Last Name']}")
+                found = True
+        if not found:
+            self.logger.info(f"No contacts found in state: {state}")
 
 class AddressBookManager:
     logger = create_logger('AddressBook_logger')
@@ -349,7 +367,7 @@ def main():
     print("*** Welcome to Address Book Program ***")
 
     while True:
-        print("Options")
+        print("\nOptions")
         print("1. Create Address Book")
         print("2. Select Address Book")
         print("3. Delete Address Book")
@@ -364,16 +382,17 @@ def main():
             address_book = manager.select_address_book()
             if address_book:
                 while True:
-                    print("Options")
+                    print("\nOptions")
                     print("1. Add Contact")
                     print("2. Edit Contact")
                     print("3. Delete Contact")
                     print("4. View Contact")
                     print("5. View All Contacts")
                     print("6. View Contacts by City")
-                    print("7. Back to Main Menu")
+                    print("7. View Contacts by State")
+                    print("8. Back to Main Menu")
                     
-                    sub_choice = input("Enter your choice (1-7): ")
+                    sub_choice = input("Enter your choice (1-8): ")
                     
                     if sub_choice == '1':
                         address_book.add_contact()
@@ -394,9 +413,12 @@ def main():
                         city = input("Enter city name: ")
                         address_book.view_contacts_by_city(city)
                     elif sub_choice == '7':
+                        state = input("Enter state name: ")
+                        address_book.view_contacts_by_state(state)
+                    elif sub_choice == '8':
                         break
                     else:
-                        address_book.logger.info("Invalid choice. Please enter a number between 1 and 7.\n")
+                        address_book.logger.info("Invalid choice. Please enter a number between 1 and 8.\n")
         elif choice == '3':
             manager.delete_address_book()
         elif choice == '4':
