@@ -263,12 +263,16 @@ class AddressBook:
         """
         city = city.strip().lower()
         found = False
+        count = 0
         for contact in self.contacts.values():
             if self._normalize_name(contact['City']) == city:
                 self.logger.info(f"{contact['First Name']} {contact['Last Name']}")
                 found = True
+                count += 1
         if not found:
             self.logger.info(f"No contacts found in city: {city}")
+        else:
+            self.logger.info(f"\nTotal number of contacts in given City is {count}")
 
     def view_contacts_by_state(self, state):
         """
@@ -281,12 +285,16 @@ class AddressBook:
         """
         state = state.strip().lower()
         found = False
+        count = 0
         for contact in self.contacts.values():
             if self._normalize_name(contact['State']) == state:
                 self.logger.info(f"{contact['First Name']} {contact['Last Name']}")
                 found = True
+                count += 1
         if not found:
             self.logger.info(f"No contacts found in state: {state}")
+        else:
+            self.logger.info(f"\nTotal number of contacts in given State is {count}")
 
 class AddressBookManager:
     logger = create_logger('AddressBook_logger')
