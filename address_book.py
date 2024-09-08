@@ -189,6 +189,26 @@ class AddressBook:
         self.contacts[normalized_name] = contact
         self.logger.info(f"Contact {contact['First Name']} {contact['Last Name']} updated successfully.\n")
 
+    def delete_contact(self):
+        """
+        Description:
+            Prompts the user for the contact they wish to delete and removes the contact from the address book.
+        Parameters:
+            None
+        Returns:
+            None
+        """
+        print("Enter the name of the contact to delete:")
+        first_name = input("First name: ")
+        last_name = input("Last name: ")
+        normalized_name = (self._normalize_name(first_name), self._normalize_name(last_name))
+
+        if normalized_name in self.contacts:
+            self.contacts.pop(normalized_name)
+            self.logger.info(f"Contact {first_name} {last_name} deleted successfully.\n")
+        else:
+            print("Contact not found.")
+            self.logger.info(f"Attempted to delete non-existent contact: {first_name} {last_name}.")
 
     def view_contact(self, first_name, last_name):
         """
@@ -238,30 +258,33 @@ def main():
         print("Options")
         print("1. Add Contact")
         print("2. Edit Contact")
-        print("3. View Contact")
-        print("4. View All Contacts")
-        print("5. Exit")
+        print("3. Delete Contact")
+        print("4. View Contact")
+        print("5. View All Contacts")
+        print("6. Exit")
         
-        choice = input("Enter your choice (1-5): ")
+        choice = input("Enter your choice (1-6): ")
         
         if choice == '1':
             address_book.add_contact()
         elif choice == '2':
             address_book.edit_contact()
         elif choice == '3':
+            address_book.delete_contact()
+        elif choice == '4':
             try:
                 first_name = input("Enter first name: ")
                 last_name = input("Enter last name: ")
                 address_book.view_contact(first_name, last_name)
             except ValueError:
                 address_book.logger.info("Invalid input. Please enter valid names.")
-        elif choice == '4':
-            address_book.view_all_contacts()
         elif choice == '5':
+            address_book.view_all_contacts()
+        elif choice == '6':
             address_book.logger.info("Exiting the system. Goodbye!")
             break
         else:
-            address_book.logger.info("Invalid choice. Please enter a number between 1 and 5.\n")
+            address_book.logger.info("Invalid choice. Please enter a number between 1 and 6.\n")
 
 if __name__ == "__main__":
     main()
