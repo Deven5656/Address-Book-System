@@ -47,6 +47,7 @@ class AddressBook:
         
         normalized_name = (self._normalize_name(first_name), self._normalize_name(last_name))
 
+#This Check contact already exists and avoid Duplicate entry
         if normalized_name in self.contacts:
             print("Contact with this name already exists.")
             return
