@@ -47,7 +47,7 @@ class AddressBook:
         
         normalized_name = (self._normalize_name(first_name), self._normalize_name(last_name))
 
-#This Check contact already exists and avoid Duplicate entry
+        # This Check contact already exists and avoid Duplicate entry
         if normalized_name in self.contacts:
             print("Contact with this name already exists.")
             return
@@ -251,6 +251,24 @@ class AddressBook:
                 self.logger.info(f"Email: {details['Email']}\n")
         else:
             self.logger.info("No contacts available.\n")
+    
+    def view_contacts_by_city(self, city):
+        """
+        Description:
+            Prints the details of all contacts in the specified city.
+        Parameters:
+            city (str): The city to filter contacts by.
+        Returns:
+            None
+        """
+        city = city.strip().lower()
+        found = False
+        for contact in self.contacts.values():
+            if self._normalize_name(contact['City']) == city:
+                self.logger.info(f"{contact['First Name']} {contact['Last Name']}")
+                found = True
+        if not found:
+            self.logger.info(f"No contacts found in city: {city}")
 
 class AddressBookManager:
     logger = create_logger('AddressBook_logger')
@@ -258,6 +276,14 @@ class AddressBookManager:
         self.address_books = {}
 
     def create_address_book(self, name):
+        """
+        Description:
+            Create a new address book 
+        Parameters:
+            name : Name of Address Book to be created
+        Returns:
+            None
+        """
         if name in self.address_books:
             self.logger.info("Address book with this name already exists.")
         else:
@@ -265,11 +291,19 @@ class AddressBookManager:
             self.logger.info(f"Address book '{name}' created successfully.")
 
     def select_address_book(self):
-        if self.address_books :
+        """
+        Description:
+            select which address book is to be use
+        Parameters:
+            None
+        Returns:
+            str : name of Address Book
+        """
+        if self.address_books:
             print("Available address books:")
             for index, name in enumerate(self.address_books.keys(), 1):
                 print(f"{index}. {name}")
-            try :
+            try:
                 choice = int(input("Select an address book by number: "))
                 names = list(self.address_books.keys())
                 if 1 <= choice <= len(names):
@@ -278,23 +312,27 @@ class AddressBookManager:
                     print("Invalid choice.")
                     return None
             except ValueError:
-                self.logger.info("Invalid input. Please enter Interger only")
+                self.logger.info("Invalid input. Please enter an integer only.")
         else:
             self.logger.info("No Address Book available. Create Address Book\n")
         
     def delete_address_book(self):
         """
-        Deletes an address book with the specified name.
-        If the address book does not exist, informs the user.
+        Description:
+            Deletes an address book with the specified name. 
+        Parameters:
+            None
+        Returns:
+            None
         """
-        if self.address_books :
+        if self.address_books:
             print("Available address books:")
             for index, name in enumerate(self.address_books.keys(), 1):
                 print(f"{index}. {name}")
-            try :
+            try:
                 choice = int(input("Select an address book by number to delete: "))
                 names = list(self.address_books.keys())
-                if 1 <= choice <= len(names) :
+                if 1 <= choice <= len(names):
                     name = names[choice - 1]
                     del self.address_books[name]
                     self.logger.info(f"Address book '{name}' deleted successfully.")
@@ -302,7 +340,7 @@ class AddressBookManager:
                     print("Invalid choice.")
                     return None
             except ValueError:
-                self.logger.info("Invalid input. Please enter Interger only")
+                self.logger.info("Invalid input. Please enter an integer only.")
         else:
             self.logger.info("No Address Book available. Create Address Book\n")
 
@@ -332,9 +370,10 @@ def main():
                     print("3. Delete Contact")
                     print("4. View Contact")
                     print("5. View All Contacts")
-                    print("6. Back to Main Menu")
+                    print("6. View Contacts by City")
+                    print("7. Back to Main Menu")
                     
-                    sub_choice = input("Enter your choice (1-6): ")
+                    sub_choice = input("Enter your choice (1-7): ")
                     
                     if sub_choice == '1':
                         address_book.add_contact()
@@ -352,16 +391,19 @@ def main():
                     elif sub_choice == '5':
                         address_book.view_all_contacts()
                     elif sub_choice == '6':
+                        city = input("Enter city name: ")
+                        address_book.view_contacts_by_city(city)
+                    elif sub_choice == '7':
                         break
                     else:
-                        address_book.logger.info("Invalid choice. Please enter a number between 1 and 6.\n")
+                        address_book.logger.info("Invalid choice. Please enter a number between 1 and 7.\n")
         elif choice == '3':
             manager.delete_address_book()
         elif choice == '4':
             print("Exiting the system. Goodbye!")
             break
         else:
-            print("Invalid choice. Please enter a number between 1 and 3.\n")
+            print("Invalid choice. Please enter a number between 1 and 4.\n")
 
 if __name__ == "__main__":
     main()
