@@ -299,14 +299,38 @@ class AddressBook:
     def view_contacts_sorted(self):
         """
         Description:
-            prints all contacts sorted by that name
+            Prompts the user to choose a criteria (Name, Zip Code, City, or State) and prints all contacts sorted by that criteria.
         Parameters:
             None
         Returns:
             None
         """
-        sorted_contacts = sorted(self.contacts.values(), key=lambda x: self._normalize_name(x['First Name']))
-        criteria = 'Name'
+        print("Sort contacts by:")
+        print("1. Name")
+        print("2. Zip Code")
+        print("3. City")
+        print("4. State")
+
+        choice = input("Enter your choice (1-4): ")
+        if choice == '1':
+            # Sort by Name
+            sorted_contacts = sorted(self.contacts.values(), key=lambda x: self._normalize_name(x['First Name']))
+            criteria = 'Name'
+        elif choice == '2':
+            # Sort by Zip Code
+            sorted_contacts = sorted(self.contacts.values(), key=lambda x: x['Zip Code'])
+            criteria = 'Zip Code'
+        elif choice == '3':
+            # Sort by City
+            sorted_contacts = sorted(self.contacts.values(), key=lambda x: self._normalize_name(x['City']))
+            criteria = 'City'
+        elif choice == '4':
+            # Sort by State
+            sorted_contacts = sorted(self.contacts.values(), key=lambda x: self._normalize_name(x['State']))
+            criteria = 'State'
+        else:
+            print("Invalid choice.")
+            return
 
         if sorted_contacts:
             for contact in sorted_contacts:
@@ -421,7 +445,7 @@ def main():
                     print("5. View All Contacts")
                     print("6. View Contacts by City")
                     print("7. View Contacts by State")
-                    print("8. View Contacts Sorted by Name")
+                    print("8. View Contacts Sorted by Name, Zip Code, City, or State")
                     print("9. Back to Main Menu")
                     
                     sub_choice = input("Enter your choice (1-8): ")
