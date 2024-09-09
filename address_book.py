@@ -1,10 +1,11 @@
 '''
     @Author: Deven Gupta
-    @Date: 07-09-2024
+    @Date: 08-09-2024
     @Last Modified by: Deven Gupta
-    @Last Modified time: 07-09-2024 
+    @Last Modified time: 08-09-2024 
     @Title : Python program to create an Address Book System
 '''
+import csv
 from validator import *
 from logger import create_logger
 
@@ -342,31 +343,43 @@ class AddressBook:
         else:
             self.logger.info("No contacts available.\n")
 
-    def save_to_file(self, file_name):
+    def save_to_file(self, file_name, file_type):
         """
         Description:
-           Function used to save dict inforation to txt file
+           Function used to save dict inforation to txt or csv file
         Parameters:
             file_name : Name of file
+            file_type : Type of file
         Returns:
             None
         """
-        with open(file_name +".txt", 'w') as file:
-            for normalized_name, details in self.contacts.items():
-                line = f"{details['First Name']},{details['Last Name']},{details['Address']},{details['City']},{details['State']},{details['Zip Code']},{details['Phone Number']},{details['Email']}\n"
-                file.write(line)
-        self.logger.info(f"Contacts saved to text file '{file_name}'.")
+        if file_type == 'txt':
+            with open(file_name +".txt", 'w') as file:
+                for normalized_name, details in self.contacts.items():
+                    line = f"{details['First Name']},{details['Last Name']},{details['Address']},{details['City']},{details['State']},{details['Zip Code']},{details['Phone Number']},{details['Email']}\n"
+                    file.write(line)
+            self.logger.info(f"Contacts saved to text file '{file_name}'.")
+        elif file_type == 'csv':
+            with open(file_name + ".csv", 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['First Name', 'Last Name', 'Address', 'City', 'State', 'Zip Code', 'Phone Number', 'Email'])
+                for normalized_name, details in self.contacts.items():
+                    writer.writerow([details['First Name'], details['Last Name'], details['Address'], details['City'], details['State'], details['Zip Code'], details['Phone Number'], details['Email']])
+            self.logger.info(f"Contacts saved to CSV file '{file_name}'.")
+        else:
+            print("Unsupported file type.")
 
-    def load_from_file(self, file_name):
+    def load_from_file(self, file_name, file_type):
         """
         Description:
-           Function used to load data from txt file to contacts dict
+           Function used to load data from txt or csv file to contacts dict
         Parameters:
             file_name : Name of file
+            file_type : Type of file
         Returns:
             None
         """
-        try:
+        if file_type == 'txt':
             with open(file_name +".txt", 'r') as file:
                 for line in file:
                     parts = line.strip().split(',')
@@ -383,9 +396,15 @@ class AddressBook:
                             'Email': parts[7]
                         }
             self.logger.info(f"Contacts loaded from text file '{file_name}'.")
-        except FileNotFoundError as FE:
-            print(FE)
-            return None
+        elif file_type == 'csv':
+            with open(file_name + ".csv", 'r') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    normalized_name = (self._normalize_name(row['First Name']), self._normalize_name(row['Last Name']))
+                    self.contacts[normalized_name] = row
+            self.logger.info(f"Contacts loaded from CSV file '{file_name}'.")
+        else:
+            print("Unsupported file type.")
 
 class AddressBookManager:
     logger = create_logger('AddressBook_logger')
@@ -521,10 +540,12 @@ def main():
                         address_book.view_contacts_sorted()
                     elif sub_choice == '9':
                         file_name = input("Enter the file name: ")
-                        address_book.save_to_file(file_name)
+                        file_type = input("Enter file type (txt, csv): ")
+                        address_book.save_to_file(file_name, file_type)
                     elif sub_choice == '10':
                         file_name = input("Enter the file name: ")
-                        address_book.load_from_file(file_name)
+                        file_type = input("Enter file type (txt, csv): ")
+                        address_book.load_from_file(file_name, file_type)
                     elif sub_choice == '11':
                         break
                     else:
