@@ -295,6 +295,29 @@ class AddressBook:
             self.logger.info(f"No contacts found in state: {state}")
         else:
             self.logger.info(f"\nTotal number of contacts in given State is {count}")
+        
+    def view_contacts_sorted(self):
+        """
+        Description:
+            prints all contacts sorted by that name
+        Parameters:
+            None
+        Returns:
+            None
+        """
+        sorted_contacts = sorted(self.contacts.values(), key=lambda x: self._normalize_name(x['First Name']))
+        criteria = 'Name'
+
+        if sorted_contacts:
+            for contact in sorted_contacts:
+                self.logger.info(f"Full Name: {contact['First Name']} {contact['Last Name']}")
+                self.logger.info(f"Full Address: {contact['Address']}, {contact['City']}, {contact['State']} {contact['Zip Code']}")
+                self.logger.info(f"Phone Number: {contact['Phone Number']}")
+                self.logger.info(f"Email: {contact['Email']}\n")
+            self.logger.info(f"Contacts sorted by {criteria}.\n")
+        else:
+            self.logger.info("No contacts available.\n")
+
 
 class AddressBookManager:
     logger = create_logger('AddressBook_logger')
@@ -398,7 +421,8 @@ def main():
                     print("5. View All Contacts")
                     print("6. View Contacts by City")
                     print("7. View Contacts by State")
-                    print("8. Back to Main Menu")
+                    print("8. View Contacts Sorted by Name")
+                    print("9. Back to Main Menu")
                     
                     sub_choice = input("Enter your choice (1-8): ")
                     
@@ -424,6 +448,8 @@ def main():
                         state = input("Enter state name: ")
                         address_book.view_contacts_by_state(state)
                     elif sub_choice == '8':
+                        address_book.view_contacts_sorted()
+                    elif sub_choice == '9':
                         break
                     else:
                         address_book.logger.info("Invalid choice. Please enter a number between 1 and 8.\n")
