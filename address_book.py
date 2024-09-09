@@ -342,6 +342,50 @@ class AddressBook:
         else:
             self.logger.info("No contacts available.\n")
 
+    def save_to_file(self, file_name):
+        """
+        Description:
+           Function used to save dict inforation to txt file
+        Parameters:
+            file_name : Name of file
+        Returns:
+            None
+        """
+        with open(file_name +".txt", 'w') as file:
+            for normalized_name, details in self.contacts.items():
+                line = f"{details['First Name']},{details['Last Name']},{details['Address']},{details['City']},{details['State']},{details['Zip Code']},{details['Phone Number']},{details['Email']}\n"
+                file.write(line)
+        self.logger.info(f"Contacts saved to text file '{file_name}'.")
+
+    def load_from_file(self, file_name):
+        """
+        Description:
+           Function used to load data from txt file to contacts dict
+        Parameters:
+            file_name : Name of file
+        Returns:
+            None
+        """
+        try:
+            with open(file_name +".txt", 'r') as file:
+                for line in file:
+                    parts = line.strip().split(',')
+                    if len(parts) == 8:
+                        normalized_name = (self._normalize_name(parts[0]), self._normalize_name(parts[1]))
+                        self.contacts[normalized_name] = {
+                            'First Name': parts[0],
+                            'Last Name': parts[1],
+                            'Address': parts[2],
+                            'City': parts[3],
+                            'State': parts[4],
+                            'Zip Code': parts[5],
+                            'Phone Number': parts[6],
+                            'Email': parts[7]
+                        }
+            self.logger.info(f"Contacts loaded from text file '{file_name}'.")
+        except FileNotFoundError as FE:
+            print(FE)
+            return None
 
 class AddressBookManager:
     logger = create_logger('AddressBook_logger')
@@ -427,9 +471,9 @@ def main():
         print("2. Select Address Book")
         print("3. Delete Address Book")
         print("4. Exit")
-        
+
         choice = input("Enter your choice (1-4): ")
-        
+
         if choice == '1':
             name = input("Enter the name for the new address book: ")
             manager.create_address_book(name)
@@ -446,10 +490,12 @@ def main():
                     print("6. View Contacts by City")
                     print("7. View Contacts by State")
                     print("8. View Contacts Sorted by Name, Zip Code, City, or State")
-                    print("9. Back to Main Menu")
-                    
-                    sub_choice = input("Enter your choice (1-8): ")
-                    
+                    print("9. Save Contacts to File")
+                    print("10. Load Contacts from File")
+                    print("11. Back to Main Menu")
+
+                    sub_choice = input("Enter your choice (1-11): ")
+
                     if sub_choice == '1':
                         address_book.add_contact()
                     elif sub_choice == '2':
@@ -474,9 +520,15 @@ def main():
                     elif sub_choice == '8':
                         address_book.view_contacts_sorted()
                     elif sub_choice == '9':
+                        file_name = input("Enter the file name: ")
+                        address_book.save_to_file(file_name)
+                    elif sub_choice == '10':
+                        file_name = input("Enter the file name: ")
+                        address_book.load_from_file(file_name)
+                    elif sub_choice == '11':
                         break
                     else:
-                        address_book.logger.info("Invalid choice. Please enter a number between 1 and 8.\n")
+                        address_book.logger.info("Invalid choice. Please enter a number between 1 and 11.\n")
         elif choice == '3':
             manager.delete_address_book()
         elif choice == '4':
