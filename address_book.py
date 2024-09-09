@@ -6,6 +6,7 @@
     @Title : Python program to create an Address Book System
 '''
 import csv
+import json
 from validator import *
 from logger import create_logger
 
@@ -346,7 +347,7 @@ class AddressBook:
     def save_to_file(self, file_name, file_type):
         """
         Description:
-           Function used to save dict inforation to txt or csv file
+           Function used to save dict inforation to txt, csv or json file
         Parameters:
             file_name : Name of file
             file_type : Type of file
@@ -366,13 +367,17 @@ class AddressBook:
                 for normalized_name, details in self.contacts.items():
                     writer.writerow([details['First Name'], details['Last Name'], details['Address'], details['City'], details['State'], details['Zip Code'], details['Phone Number'], details['Email']])
             self.logger.info(f"Contacts saved to CSV file '{file_name}'.")
+        elif file_type == 'json':
+            with open(file_name + ".json", 'w') as file:
+                json.dump({name: details for name, details in self.contacts.items()}, file, indent=4)
+            self.logger.info(f"Contacts saved to JSON file '{file_name}'.")
         else:
             print("Unsupported file type.")
 
     def load_from_file(self, file_name, file_type):
         """
         Description:
-           Function used to load data from txt or csv file to contacts dict
+           Function used to load data from txt, csv or json file to contacts dict
         Parameters:
             file_name : Name of file
             file_type : Type of file
@@ -403,6 +408,10 @@ class AddressBook:
                     normalized_name = (self._normalize_name(row['First Name']), self._normalize_name(row['Last Name']))
                     self.contacts[normalized_name] = row
             self.logger.info(f"Contacts loaded from CSV file '{file_name}'.")
+        elif file_type == 'json':
+            with open(file_name + ".json", 'r') as file:
+                self.contacts = json.load(file)
+            self.logger.info(f"Contacts loaded from JSON file '{file_name}'.")
         else:
             print("Unsupported file type.")
 
@@ -540,11 +549,11 @@ def main():
                         address_book.view_contacts_sorted()
                     elif sub_choice == '9':
                         file_name = input("Enter the file name: ")
-                        file_type = input("Enter file type (txt, csv): ")
+                        file_type = input("Enter file type (txt, csv or json): ")
                         address_book.save_to_file(file_name, file_type)
                     elif sub_choice == '10':
                         file_name = input("Enter the file name: ")
-                        file_type = input("Enter file type (txt, csv): ")
+                        file_type = input("Enter file type (txt, csv or json): ")
                         address_book.load_from_file(file_name, file_type)
                     elif sub_choice == '11':
                         break
