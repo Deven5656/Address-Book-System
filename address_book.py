@@ -369,7 +369,7 @@ class AddressBook:
             self.logger.info(f"Contacts saved to CSV file '{file_name}'.")
         elif file_type == 'json':
             with open(file_name + ".json", 'w') as file:
-                json.dump({name: details for name, details in self.contacts.items()}, file, indent=4)
+                json.dump({str(name): details for name, details in self.contacts.items()}, file, indent=4)
             self.logger.info(f"Contacts saved to JSON file '{file_name}'.")
         else:
             print("Unsupported file type.")
